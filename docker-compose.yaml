@@ -3,7 +3,7 @@ version: '3.3'
 services:
   osrmaster:
     build: .
-    image: leonardoedgar/osr_course
+    image: crigroup/osr_course
     container_name: osrmaster
     network_mode: "host"
     environment:
@@ -11,10 +11,7 @@ services:
     shm_size: 256M
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./catkin_ws/src/osr_course_pkgs:/home/leonardo_osr/catkin_ws/src/osr_course_pkgs
-      - ./catkin_ws/src/openrave-installation:/home/leonardo_osr/catkin_ws/src/openrave-installation
+      - ./catkin_ws/src/osr_course_pkgs:/home/cri_osr/catkin_ws/src/osr_course_pkgs
     stop_signal: SIGINT
-    working_dir: /home/leonardo_osr/catkin_ws/src
+    working_dir: /home/cri_osr/catkin_ws/src
     command: sleep infinity
-    ports:
-      - 8800:8888

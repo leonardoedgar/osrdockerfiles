@@ -1,4 +1,4 @@
-FROM nvidia/opengl:base-ubuntu16.04
+FROM nvidia/cudagl:10.1-devel-ubuntu16.04
 MAINTAINER Leonardo Edgar
 
 # Install core linux tools
@@ -78,8 +78,8 @@ RUN apt-get update && apt-get install -y python-catkin-tools\
 	&& rm -rf /var/lib/apt/lists/* 
 
 # User and permissions
-ARG user=leonardo_osr
-ARG group=leonardo_osr
+ARG user=cri_osr
+ARG group=cri_osr
 ARG uid=1000
 ARG gid=1000
 ARG home=/home/${user}
@@ -94,19 +94,19 @@ WORKDIR ${home}
 
 # Setup catkin workspace
 RUN mkdir catkin_ws/src -p
-COPY --chown=leonardo_osr catkin_ws/src/osr_course_pkgs			catkin_ws/src/osr_course_pkgs
-# COPY --chown=leonardo_osr catkin_ws/src/bcap					catkin_ws/src/bcap
+COPY --chown=cri_osr catkin_ws/src/osr_course_pkgs			catkin_ws/src/osr_course_pkgs
+# COPY --chown=cri_osr catkin_ws/src/bcap					catkin_ws/src/bcap
 RUN cd catkin_ws/src && wstool init . && \
 	wstool merge osr_course_pkgs/dependencies.rosinstall && \
 	wstool update
 RUN /bin/bash -c "source /opt/ros/kinetic/setup.bash; cd catkin_ws/src; catkin_init_workspace; cd ..; catkin_make"
 
 # Update .bashrc for bash interactive mode
-RUN echo "source /home/leonardo_osr/catkin_ws/devel/setup.bash\nPATH=$HOME/.local/bin:$PATH" >> /home/leonardo_osr/.bashrc
+RUN echo "source /home/cri_osr/catkin_ws/devel/setup.bash\nPATH=$HOME/.local/bin:$PATH" >> /home/cri_osr/.bashrc
 
 # Update entrypoint for commands
 COPY ros_entrypoint.sh /ros_entrypoint.sh
 RUN bash -c "sudo chmod +x /ros_entrypoint.sh"
 RUN sudo sed --in-place --expression \
-    '$isource "/home/leonardo_osr/catkin_ws/devel/setup.bash"' \
+    '$isource "/home/cri_osr/catkin_ws/devel/setup.bash"' \
     /ros_entrypoint.sh
