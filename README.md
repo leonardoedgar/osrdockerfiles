@@ -1,6 +1,7 @@
 # dockerfiles
-A repository to create a docker image for NTU CRI Group OS Robotics course
-To download the course source code
+A repository to create a docker image for OS Robotics course
+
+To download the course solution code
 ```sh
 ./update-sourcecode.sh
 ```

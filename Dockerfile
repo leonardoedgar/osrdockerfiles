@@ -7,7 +7,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* 
 
 # Install Python
-RUN apt-get update && apt-get install -y ipython python-dev python-numpy python-pip python-scipy
+RUN apt-get update && apt-get install -y ipython python-dev python-numpy python-pip \
+	python-scipy python-ipdb python-setuptools python-pytest python-pytest-mock --no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*
+RUN pip install sympy==0.7.1
+RUN pip install --upgrade pip && pip install mock && pip install --upgrade pytest pytest-mock
 
 # Install OpenRAVE dependencies
 RUN mkdir -p ~/git && cd ~/git    \
@@ -25,10 +29,12 @@ RUN cd ~/git/openrave-installation-0.9.0 && ./install-fcl.sh
 RUN cd ~/git/openrave-installation-0.9.0 && ./install-openrave.sh
 
 # Install OpenCV
-RUN apt-get update && apt-get install -y libopencv-dev python-opencv
+RUN apt-get update && apt-get install -y libopencv-dev python-opencv --no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Install PCL
-RUN apt-get update && apt-get install -y libpcl-dev
+RUN apt-get update && apt-get install -y libpcl-dev --no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Install ROS
 RUN sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' \
@@ -40,7 +46,8 @@ RUN sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) 
 	&& rosdep update
 
 # Install ROS Dependencies for building packages
-RUN apt install -y python-rosinstall python-rosinstall-generator python-wstool build-essential
+RUN apt install -y python-rosinstall python-rosinstall-generator python-wstool build-essential --no-install-recommends \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Base ROS dependencies
 RUN apt-get update && apt-get install -qq -y --no-install-recommends \
@@ -74,7 +81,7 @@ RUN apt-get update && apt-get install -qq -y --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Install python-catkin-tools
-RUN apt-get update && apt-get install -y python-catkin-tools\
+RUN apt-get update && apt-get install -y python-catkin-tools --no-install-recommends\
 	&& rm -rf /var/lib/apt/lists/* 
 
 # User and permissions
@@ -95,11 +102,11 @@ WORKDIR ${home}
 # Setup catkin workspace
 RUN mkdir catkin_ws/src -p
 COPY --chown=cri_osr catkin_ws/src/osr_course_pkgs			catkin_ws/src/osr_course_pkgs
-# COPY --chown=cri_osr catkin_ws/src/bcap					catkin_ws/src/bcap
+COPY --chown=cri_osr catkin_ws/src/osr_course_solutions		catkin_ws/src/osr_course_solutions
 RUN cd catkin_ws/src && wstool init . && \
 	wstool merge osr_course_pkgs/dependencies.rosinstall && \
 	wstool update
-RUN /bin/bash -c "source /opt/ros/kinetic/setup.bash; cd catkin_ws/src; catkin_init_workspace; cd ..; catkin_make"
+RUN /bin/bash -c "source /opt/ros/kinetic/setup.bash; cd catkin_ws/src; catkin_init_workspace; cd ..; catkin build"
 
 # Update .bashrc for bash interactive mode
 RUN echo "source /home/cri_osr/catkin_ws/devel/setup.bash\nPATH=$HOME/.local/bin:$PATH" >> /home/cri_osr/.bashrc
