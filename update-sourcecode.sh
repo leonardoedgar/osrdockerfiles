@@ -27,7 +27,7 @@ fi
 info_msg "\n[Updating private ROS packages]"
 CATKIN_WS="${COMPOSE_DIR}/catkin_ws/src"
 mkdir -p ${CATKIN_WS}
-REPOSITORIES=("osr_course_pkgs")
+REPOSITORIES=("osr_course_pkgs" "osr_course_solutions")
 CURRENT_DIR=$(pwd)
 for REPO in "${REPOSITORIES[@]}"
 do
@@ -38,6 +38,6 @@ do
             echo -ne "${REPO} \n"
         fi
     else
-        git clone https://github.com/crigroup/${REPO}.git ${REPO_FOLDER};
+        git clone https://github.com/leonardoedgar/${REPO}.git ${REPO_FOLDER};
     fi
 done
