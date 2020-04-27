@@ -1,6 +1,0 @@
-version: '3.3'
-
-services:
-  osrmaster:
-    build: .
-    image: crigroup/osr_course
